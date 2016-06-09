@@ -8,8 +8,6 @@
     apt_repository: repo="deb https://apt.dockerproject.org/repo ubuntu-xenial main"
   - name: create systemd docker directory
     file: path=/etc/systemd/system/docker.service.d state=directory
-  - name: copy docker proxy environment file
-    template: src=50-proxy.conf dest=/etc/systemd/system/docker.service.d/50-proxy.conf owner=root mode=0644
   - name: copy docker service arg file
     copy: src=60-exec.conf dest=/etc/systemd/system/docker.service.d/60-exec.conf owner=root mode=0644
   - name: reload daemon setting
