@@ -1,0 +1,20 @@
+- hosts: dockerhosts
+  user: "{{ username }}"
+  sudo: yes
+  tasks:
+  - name: import docker keyring
+    apt_key: keyserver=hkp://p80.pool.sks-keyservers.net:80 id=58118E89F3A912897C070ADBF76221572C52609D
+  - name: add docker repos
+    apt_repository: repo="deb https://apt.dockerproject.org/repo ubuntu-xenial main"
+  - name: create systemd docker directory
+    file: path=/etc/systemd/system/docker.service.d state=directory
+  - name: copy docker proxy environment file
+    template: src=50-proxy.conf dest=/etc/systemd/system/docker.service.d/50-proxy.conf owner=root mode=0644
+  - name: copy docker service arg file
+    copy: src=60-exec.conf dest=/etc/systemd/system/docker.service.d/60-exec.conf owner=root mode=0644
+  - name: reload daemon setting
+    shell: systemctl daemon-reload
+  - name: install docker
+    apt: name=docker-engine update_cache=yes
+  - name: boot docker service
+    service: name=docker enabled=yes
